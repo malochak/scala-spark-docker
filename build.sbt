@@ -11,8 +11,10 @@ lazy val root = (project in file("."))
       "org.apache.spark" %% "spark-core" % sparkVersion,
       "org.apache.spark" %% "spark-sql" % sparkVersion,
       "org.apache.spark" %% "spark-streaming" % sparkVersion,
-      "org.postgresql" % "postgresql" % "42.2.20"
-//      "org.apache.hadoop" % "hadoop-aws" % "3.4.0"
+      "org.postgresql" % "postgresql" % "42.7.3",
+      "com.github.pureconfig" %% "pureconfig" % "0.17.6"
+
+      //      "org.apache.hadoop" % "hadoop-aws" % "3.4.0"
     ),
 
     // Enable forking to allow setting JVM options
