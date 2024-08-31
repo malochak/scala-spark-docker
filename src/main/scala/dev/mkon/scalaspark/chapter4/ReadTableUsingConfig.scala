@@ -36,9 +36,10 @@ case object ReadTableUsingConfig extends App {
     .option("url", s"$scheme://$host:$port/$name")
     .option("user", username)
     .option("password", password)
-    .option("dbtable", "(select airport, city from airports where state = 'NC') qry")
+    .option("dbtable", "(select airport, city from airports where state = 'TX') qry")
     .load()
 
+  airportsDF.printSchema()
   airportsDF.show(numRows = 200, truncate = 200, vertical = true)
   println(airportsDF.count())
 }
