@@ -3,7 +3,6 @@ package dev.mkon.scalaspark.chapter4
 import dev.mkon.scalaspark.config.Config
 import org.apache.spark.sql.SparkSession
 
-@SuppressWarnings(Array("org.wartremover.warts.OptionPartial"))
 case object ReadTableUsingConfig extends App {
 
   private[chapter4] val session = SparkSession
