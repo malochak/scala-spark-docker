@@ -1,6 +1,6 @@
 package dev.mkon.scalaspark.chapter4
 
-import dev.mkon.scalaspark.config.Config
+import dev.mkon.scalaspark.config.{Config, Database}
 import org.apache.spark.sql.SparkSession
 
 case object ReadTableUsingConfig extends App {
@@ -11,24 +11,24 @@ case object ReadTableUsingConfig extends App {
     .master("local[*]")
     .getOrCreate()
 
-  private val postgresDB = Config.getDB("scala_spark_db")
+  private val postgresDB = Config.getDB("scala_spark_db").get
 
-  private def getDBParams(param: String): Option[String] = param match {
-    case "scheme" => postgresDB.map(_.scheme)
-    case "host" => postgresDB.map(_.host)
-    case "port" => postgresDB.map(_.port)
-    case "name" => postgresDB.map(_.name)
-    case "username" => postgresDB.map(_.username.value)
-    case "password" => postgresDB.map(_.password.value)
+  private def getDBParams(db: Database): String => Option[String] = {
+    case "scheme" => Some(db.scheme)
+    case "host" => Some(db.host)
+    case "port" => Some(db.port)
+    case "name" => Some(db.name)
+    case "username" => Some(db.username.value)
+    case "password" => Some(db.password.value)
     case _ => None
   }
 
-  private val scheme = getDBParams("scheme").get
-  private val host = getDBParams("host").get
-  private val port = getDBParams("port").get
-  private val name = getDBParams("name").get
-  private val username = getDBParams("username").get
-  private val password = getDBParams("password").get
+  private val scheme = getDBParams(postgresDB)("scheme").get
+  private val host = getDBParams(postgresDB)("host").get
+  private val port = getDBParams(postgresDB)("port").get
+  private val name = getDBParams(postgresDB)("name").get
+  private val username = getDBParams(postgresDB)("username").get
+  private val password = getDBParams(postgresDB)("password").get
 
   private val airportsDF = session.read
     .format("jdbc")
