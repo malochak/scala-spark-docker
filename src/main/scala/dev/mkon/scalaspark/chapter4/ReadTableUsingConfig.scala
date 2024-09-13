@@ -1,6 +1,6 @@
 package dev.mkon.scalaspark.chapter4
 
-import dev.mkon.scalaspark.config.{Config, Database}
+import dev.mkon.scalaspark.config.Database
 import org.apache.spark.sql.SparkSession
 
 case object ReadTableUsingConfig extends App {
@@ -11,30 +11,13 @@ case object ReadTableUsingConfig extends App {
     .master("local[*]")
     .getOrCreate()
 
-  private val postgresDB = Config.getDB("scala_spark_db").get
-
-  private def getDBParams(db: Database): String => Option[String] = {
-    case "scheme" => Some(db.scheme)
-    case "host" => Some(db.host)
-    case "port" => Some(db.port)
-    case "name" => Some(db.name)
-    case "username" => Some(db.username.value)
-    case "password" => Some(db.password.value)
-    case _ => None
-  }
-
-  private val scheme = getDBParams(postgresDB)("scheme").get
-  private val host = getDBParams(postgresDB)("host").get
-  private val port = getDBParams(postgresDB)("port").get
-  private val name = getDBParams(postgresDB)("name").get
-  private val username = getDBParams(postgresDB)("username").get
-  private val password = getDBParams(postgresDB)("password").get
+  private val postgresDB: Database = Database("scala_spark_db")
 
   private val airportsDF = session.read
     .format("jdbc")
-    .option("url", s"$scheme://$host:$port/$name")
-    .option("user", username)
-    .option("password", password)
+    .option("url", postgresDB.jdbcURL)
+    .option("user", postgresDB.username.value)
+    .option("password", postgresDB.password.value)
     .option("dbtable", "(select airport, city from airports where state = 'TX') qry")
     .load()
 
